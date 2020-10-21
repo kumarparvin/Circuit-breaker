@@ -8,14 +8,16 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class CircuitBreaker implements ICircuitBreaker{
 
-    private AtomicBoolean isCircuitOpen = new AtomicBoolean(false);
-
-    private AtomicInteger failureCount = new AtomicInteger(0);
-    private AtomicInteger totalCount = new AtomicInteger(0);
-
-    private AtomicLong CircuitLastTrippedTime = new AtomicLong(System.currentTimeMillis());
+    private final AtomicBoolean isCircuitOpen;
+    private final AtomicInteger failureCount;
+    private final AtomicInteger totalCount;
+    private final AtomicLong CircuitLastTrippedTime;
 
     private CircuitBreaker() {
+        isCircuitOpen = new AtomicBoolean(false);
+        failureCount = new AtomicInteger(0);
+        totalCount = new AtomicInteger(0);
+        CircuitLastTrippedTime = new AtomicLong(0);
     }
 
     @Override

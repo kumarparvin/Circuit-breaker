@@ -2,7 +2,7 @@ package org.eggShell.core;
 
 import org.eggShell.config.CircuitBreakerConfiguration;
 
-public abstract class AbstractCircuitBreaker<T> implements CircuitBreakerExecutor<T> {
+public abstract class AbstractCircuitBreaker<T> extends CircuitBreakerObserver implements CircuitBreakerExecutor<T>  {
 
 
     private final ICircuitBreaker circuitBreaker;
@@ -18,7 +18,7 @@ public abstract class AbstractCircuitBreaker<T> implements CircuitBreakerExecuto
     abstract protected T fallback();
 
     @Override
-    public T execute() {
+    final public T execute() {
 
         boolean failed = false;
         if(!circuitBreaker.isCircuitOpen()) {
@@ -37,7 +37,7 @@ public abstract class AbstractCircuitBreaker<T> implements CircuitBreakerExecuto
         }
     }
 
-    private void circuitTripOnThresholdCross() {
+     final protected void circuitTripOnThresholdCross() {
         if(circuitBreaker.getTotalCount() >= circuitBreakerConfiguration.getNumberOfRequestToObserve()) {
             if(circuitBreaker.getFailureCount() >= circuitBreakerConfiguration.getThresholdToTripCircuit()) {
                 circuitBreaker.tripCircuit();
@@ -45,7 +45,7 @@ public abstract class AbstractCircuitBreaker<T> implements CircuitBreakerExecuto
         }
     }
 
-    private void closeCircuitOnWindowTimExpire() {
+    final protected void closeCircuitOnWindowTimExpire() {
        if (circuitBreaker.isCircuitOpen() && System.currentTimeMillis() - circuitBreaker.getCircuitLastTrippedTime() >= circuitBreakerConfiguration.getCircuitWindowOpenTime()) {
            circuitBreaker.closeTheCircuit();
        }
