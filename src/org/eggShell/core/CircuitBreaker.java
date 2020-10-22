@@ -49,6 +49,8 @@ public class CircuitBreaker implements ICircuitBreaker{
         if(!isCircuitOpen.getAndSet(true)) {
             CircuitLastTrippedTime.set(System.currentTimeMillis());
         }
+
+        System.out.println("Circuit opened");
     }
 
     @Override
@@ -61,6 +63,7 @@ public class CircuitBreaker implements ICircuitBreaker{
         isCircuitOpen.set(false);
         failureCount.set(0);
         totalCount.set(0);
+        System.out.println("Circuit closed");
     }
 
     public static class Factory {
@@ -68,7 +71,8 @@ public class CircuitBreaker implements ICircuitBreaker{
         final static Map<String, CircuitBreaker> map = new ConcurrentHashMap<>();
 
         public static CircuitBreaker getInstance(String CircuitBreakerKey) {
-            return map.putIfAbsent(CircuitBreakerKey, new CircuitBreaker());
+            CircuitBreaker c= map.putIfAbsent(CircuitBreakerKey, new CircuitBreaker());
+            return c!=null?c:map.get(CircuitBreakerKey);
         }
     }
 

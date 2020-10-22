@@ -6,7 +6,7 @@ import org.eggShell.core.AbstractCircuitBreaker;
 public class CircuitBreakerServiceTest1 extends ServiceTest1 {
 
     private final static CircuitBreakerConfiguration circuitBreakerConfiguration =
-            new CircuitBreakerConfiguration("CircuitBreakerServiceTest1", 5000L, 20, 50);
+            new CircuitBreakerConfiguration("CircuitBreakerServiceTest1", 0L, 2, 4);
 
 
     @Override
@@ -20,7 +20,7 @@ public class CircuitBreakerServiceTest1 extends ServiceTest1 {
 
             @Override
             protected String fallback() {
-                return "DUH";
+                return "Fallback name";
             }
         }.execute();
     }
@@ -36,8 +36,17 @@ public class CircuitBreakerServiceTest1 extends ServiceTest1 {
 
             @Override
             protected String fallback() {
-                return "DUH Id";
+                return "Fallback Id";
             }
         }.execute();
+    }
+
+
+    public static void main(String[] args) throws Exception {
+        int i = 0;
+        while (i++ < 20) {
+            CircuitBreakerServiceTest1 c = new CircuitBreakerServiceTest1();
+        System.out.println(c.getId());
+       }
     }
 }

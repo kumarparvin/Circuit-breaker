@@ -26,19 +26,21 @@ public abstract class AbstractCircuitBreaker<T> extends CircuitBreakerObserver i
                 return run();
             } catch (Exception e) {
                 failed = true;
-                throw e;
+                return fallback();
             } finally {
                 circuitBreaker.registerCount(failed);
                 circuitTripOnThresholdCross();
             }
         } else {
+            System.out.println("Circuit is not closed");
             closeCircuitOnWindowTimExpire();
             return fallback();
         }
     }
 
      final protected void circuitTripOnThresholdCross() {
-        if(circuitBreaker.getTotalCount() >= circuitBreakerConfiguration.getNumberOfRequestToObserve()) {
+         System.out.println("check if Circuit needs to be opened");
+         if(circuitBreaker.getTotalCount() >= circuitBreakerConfiguration.getNumberOfRequestToObserve()) {
             if(circuitBreaker.getFailureCount() >= circuitBreakerConfiguration.getThresholdToTripCircuit()) {
                 circuitBreaker.tripCircuit();
             }
@@ -46,6 +48,7 @@ public abstract class AbstractCircuitBreaker<T> extends CircuitBreakerObserver i
     }
 
     final protected void closeCircuitOnWindowTimExpire() {
+        System.out.println("check if Circuit needs to be closed");
        if (circuitBreaker.isCircuitOpen() && System.currentTimeMillis() - circuitBreaker.getCircuitLastTrippedTime() >= circuitBreakerConfiguration.getCircuitWindowOpenTime()) {
            circuitBreaker.closeTheCircuit();
        }
